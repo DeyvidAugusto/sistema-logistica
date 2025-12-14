@@ -166,6 +166,18 @@ class Command(BaseCommand):
             motoristas.append(motorista)
         
         self.stdout.write(self.style.SUCCESS(f'✅ {self.count} motoristas criados'))
+        for motorista in motoristas:
+            if not motorista.usuario:
+                username = f"motorista_{motorista.cpf.replace('.', '').replace('-', '')}"
+                user = User.objects.create_user(
+                    username=username,
+                    email=motorista.email,
+                    password='senha123',
+                    first_name=motorista.nome.split()[0],
+                    last_name=' '.join(motorista.nome.split()[1:]) if len(motorista.nome.split()) > 1 else ''
+                )
+                motorista.usuario = user
+                motorista.save()
         return motoristas
     
     def create_veiculos(self, motoristas):

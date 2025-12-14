@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 import uuid
+from django.contrib.auth.models import User
 
 def generate_codigo_rastreio():
     """Gera um código de rastreio único"""
@@ -74,6 +75,14 @@ class Motorista(models.Model):
     )
     data_cadastro = models.DateTimeField(auto_now_add=True, verbose_name="Data de Cadastro")
     data_nascimento = models.DateField(verbose_name="Data de Nascimento", null=True, blank=True)
+    usuario = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='motorista',
+        verbose_name="Usuário do Sistema"
+    )
     
     class Meta:
         verbose_name = "Motorista"
@@ -82,6 +91,30 @@ class Motorista(models.Model):
     
     def __str__(self):
         return f"{self.nome} - {self.cpf}"
+    def save(self, *args, **kwargs):
+        # Criar usuário automaticamente se não existir
+        if not self.usuario_id:
+            # Cria username baseado no CPF (sem pontuação)
+            username = f"motorista_{self.cpf.replace('.', '').replace('-', '')}"
+            
+            # Verifica se usuário já existe
+            user, created = User.objects.get_or_create(
+                username=username,
+                defaults={
+                    'email': self.email,
+                    'first_name': self.nome.split()[0] if self.nome else '',
+                    'last_name': ' '.join(self.nome.split()[1:]) if len(self.nome.split()) > 1 else '',
+                }
+            )
+            
+            if created:
+                # Define senha padrão (usuário deve alterar no primeiro acesso)
+                user.set_password('senha123')
+                user.save()
+            
+            self.usuario = user
+        
+        super().save(*args, **kwargs)
 
 class Veiculo(models.Model):
     placa = models.CharField(max_length=8, unique=True, verbose_name="Placa")
