@@ -1,4 +1,3 @@
-# core/signals.py (criar este arquivo)
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
@@ -30,13 +29,3 @@ def criar_usuario_motorista(sender, instance, created, **kwargs):
         
         instance.usuario = user
         instance.save(update_fields=['usuario'])
-
-# core/apps.py (registrar o signal)
-from django.apps import AppConfig
-
-class CoreConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'core'
-    
-    def ready(self):
-        import core.signals  # Registrar signals

@@ -6,7 +6,6 @@ from .models import (
     StatusVeiculo, StatusRota, TipoVeiculo, TipoCNH
 )
 
-# ========== USER SERIALIZERS ==========
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -24,7 +23,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
-# ========== MOTORISTA SERIALIZERS ==========
+
 class MotoristaSerializer(serializers.ModelSerializer):
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     cnh_display = serializers.CharField(source='get_cnh_display', read_only=True)
@@ -53,14 +52,14 @@ class MotoristaSerializer(serializers.ModelSerializer):
         
         return motorista
 
-# ========== CLIENTE SERIALIZER ==========
+
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente
         fields = '__all__'
         read_only_fields = ['data_cadastro']
 
-# ========== VEÍCULO SERIALIZER ==========
+
 class VeiculoSerializer(serializers.ModelSerializer):
     tipo_display = serializers.CharField(source='get_tipo_display', read_only=True)
     status_display = serializers.CharField(source='get_status_display', read_only=True)
@@ -78,7 +77,7 @@ class VeiculoSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['data_cadastro']
 
-# ========== ENTREGA SERIALIZERS ==========
+
 class EntregaSerializer(serializers.ModelSerializer):
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     cliente_info = ClienteSerializer(source='cliente', read_only=True)
@@ -160,7 +159,7 @@ class EntregaStatusUpdateSerializer(serializers.ModelSerializer):
         
         return value
 
-# ========== ROTA SERIALIZERS ==========
+
 class RotaSerializer(serializers.ModelSerializer):
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     motorista_info = MotoristaSerializer(source='motorista', read_only=True)
@@ -184,16 +183,13 @@ class RotaSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Rota
-        # Mude de '__all__' para lista explícita de campos
         fields = [
             'id', 'nome', 'descricao', 'motorista', 'veiculo', 'data_rota',
             'status', 'capacidade_total_utilizada', 'km_total_estimado',
             'km_total_real', 'tempo_estimado_minutos', 'tempo_real_minutos',
             'data_criacao', 'data_inicio', 'data_conclusao',
-            # Campos read-only
             'status_display', 'motorista_info', 'veiculo_info', 
             'entregas_info', 'capacidade_disponivel',
-            # Campos write-only
             'motorista_id', 'veiculo_id'
         ]
         read_only_fields = ['data_criacao', 'capacidade_total_utilizada', 
@@ -260,7 +256,7 @@ class RotaUpdateSerializer(RotaSerializer):
     class Meta(RotaSerializer.Meta):
         read_only_fields = RotaSerializer.Meta.read_only_fields + ['motorista', 'veiculo']
 
-# ========== HISTÓRICO SERIALIZER ==========
+
 class HistoricoEntregaSerializer(serializers.ModelSerializer):
     motorista_info = MotoristaSerializer(source='motorista', read_only=True)
     status_anterior_display = serializers.CharField(source='get_status_anterior_display', read_only=True)
@@ -271,7 +267,7 @@ class HistoricoEntregaSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['data_atualizacao']
 
-# ========== AUTH SERIALIZERS ==========
+
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
@@ -281,7 +277,7 @@ class TokenSerializer(serializers.Serializer):
     refresh = serializers.CharField()
     user = UserSerializer()
 
-# ========== RELATÓRIOS SERIALIZERS ==========
+
 class DashboardMotoristaSerializer(serializers.Serializer):
     motorista = MotoristaSerializer(read_only=True)
     veiculo_atual = VeiculoSerializer(read_only=True)
@@ -318,7 +314,7 @@ class RastreamentoSerializer(serializers.Serializer):
     localizacao_atual = serializers.CharField(required=False)
     tempo_estimado = serializers.IntegerField(required=False)  # em minutos
 
-# ========== PERFIL SERIALIZERS ==========
+
 class PerfilMotoristaSerializer(serializers.ModelSerializer):
     usuario_info = UserSerializer(source='usuario', read_only=True)
     total_entregas = serializers.SerializerMethodField()
@@ -353,7 +349,7 @@ class AlterarSenhaSerializer(serializers.Serializer):
             raise serializers.ValidationError("As senhas não coincidem")
         return data
 
-# ========== SERIALIZER PARA AÇÕES ESPECÍFICAS ==========
+
 class AtribuirEntregasSerializer(serializers.Serializer):
     entregas_ids = serializers.PrimaryKeyRelatedField(
         queryset=Entrega.objects.filter(status=StatusEntrega.PENDENTE),
@@ -377,8 +373,6 @@ class AtribuirMotoristaVeiculoSerializer(serializers.Serializer):
                 f"Motorista {motorista.nome} não está disponível"
             )
         
-        # Verificar se motorista tem CNH adequada para o veículo
-        # (esta lógica pode ser expandida conforme necessário)
         
         return data
 

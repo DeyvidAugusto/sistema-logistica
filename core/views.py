@@ -251,7 +251,7 @@ class MotoristaViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def me(self, request):
-        """Motorista vê seus próprios dados (endpoint conveniente)"""
+        """Motorista vê seus próprios dados (endpoint util)"""
         try:
             motorista = Motorista.objects.get(usuario=request.user)
             serializer = self.get_serializer(motorista)
@@ -1003,7 +1003,7 @@ class RelatoriosView(generics.GenericAPIView):
             },
         })
 
-# ========== VIEWS ADICIONAIS ==========
+
 
 class DashboardMotoristaView(generics.GenericAPIView):
     """Dashboard do motorista (seus próprios dados)"""

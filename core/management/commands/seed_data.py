@@ -189,7 +189,7 @@ class Command(BaseCommand):
         veiculos = []
         tipos = [TipoVeiculo.CARRO, TipoVeiculo.VAN, TipoVeiculo.CAMINHAO]
         
-        # Placas fictícias de SP
+        # Placas fictícias
         letras = ['ABC', 'DEF', 'GHI', 'JKL', 'MNO', 'PQR', 'STU', 'VWX', 'YZ']
         
         for i in range(self.count):

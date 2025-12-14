@@ -20,13 +20,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Third party apps
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt',
     'drf_yasg',
     'django_filters',
-    # Local apps
     'core',
     'api',
 ]
@@ -69,7 +67,7 @@ DATABASES = {
     }
 }
 
-# Para PostgreSQL (recomendado para produção):
+# Para PostgreSQL):
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',

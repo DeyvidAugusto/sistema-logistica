@@ -1,4 +1,3 @@
-# core/management/commands/flush_data.py
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from django.db import transaction
@@ -84,7 +83,7 @@ class Command(BaseCommand):
         
         try:
             with transaction.atomic():
-                # 1. Remover históricos (depende de entregas e motoristas)
+                # Remover históricos (depende de entregas e motoristas)
                 if not dry_run:
                     historicos_count = HistoricoEntrega.objects.count()
                     HistoricoEntrega.objects.all().delete()
@@ -92,7 +91,7 @@ class Command(BaseCommand):
                 else:
                     self.stdout.write(f'📝 Históricos a remover: {counts["Históricos"]}')
                 
-                # 2. Remover rotas (depende de motoristas, veículos e entregas)
+                # Remover rotas (depende de motoristas, veículos e entregas)
                 if not dry_run:
                     rotas_count = Rota.objects.count()
                     Rota.objects.all().delete()
@@ -100,7 +99,7 @@ class Command(BaseCommand):
                 else:
                     self.stdout.write(f'📝 Rotas a remover: {counts["Rotas"]}')
                 
-                # 3. Remover entregas (depende de clientes, motoristas e rotas)
+                # Remover entregas (depende de clientes, motoristas e rotas)
                 if not dry_run:
                     entregas_count = Entrega.objects.count()
                     Entrega.objects.all().delete()
@@ -108,7 +107,7 @@ class Command(BaseCommand):
                 else:
                     self.stdout.write(f'📝 Entregas a remover: {counts["Entregas"]}')
                 
-                # 4. Remover veículos (depende de motoristas)
+                # Remover veículos (depende de motoristas)
                 if not dry_run:
                     veiculos_count = Veiculo.objects.count()
                     Veiculo.objects.all().delete()
@@ -116,7 +115,7 @@ class Command(BaseCommand):
                 else:
                     self.stdout.write(f'📝 Veículos a remover: {counts["Veículos"]}')
                 
-                # 5. Remover motoristas (gera usuários também)
+                # Remover motoristas (gera usuários também)
                 if not dry_run:
                     motoristas_count = Motorista.objects.count()
                     motoristas = Motorista.objects.all()
@@ -131,7 +130,7 @@ class Command(BaseCommand):
                 else:
                     self.stdout.write(f'📝 Motoristas a remover: {counts["Motoristas"]}')
                 
-                # 6. Remover clientes
+                # Remover clientes
                 if not dry_run:
                     clientes_count = Cliente.objects.count()
                     Cliente.objects.all().delete()
@@ -139,7 +138,7 @@ class Command(BaseCommand):
                 else:
                     self.stdout.write(f'📝 Clientes a remover: {counts["Clientes"]}')
                 
-                # 7. Remover usuários não-admin (se não mantidos)
+                # Remover usuários não-admin (se não mantidos)
                 if not keep_users:
                     if not dry_run:
                         usuarios_count = User.objects.filter(is_superuser=False).count()

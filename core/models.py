@@ -108,7 +108,7 @@ class Motorista(models.Model):
             )
             
             if created:
-                # Define senha padrão (usuário deve alterar no primeiro acesso)
+                # Define senha padrão (pode ser alterada depois)
                 user.set_password('senha123')
                 user.save()
             
