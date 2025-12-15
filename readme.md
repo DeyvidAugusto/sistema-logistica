@@ -404,6 +404,10 @@ Os logs do Django são configurados no `settings.py`. Para desenvolvimento, est�
 
 ## 🚀 Deploy
 
+### API rodando no render
+
+https://sistema-logistica.onrender.com/swagger/
+
 ### Configurações para Produção
 
 1. Definir `DEBUG=False`
