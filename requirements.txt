@@ -8,3 +8,4 @@ django-filter>=25.2,<26.0
 djangorestframework-simplejwt>=5.5.1,<6.0.0
 gunicorn>=21.2.0,<22.0.0
 whitenoise>=6.6.0,<7.0.0
+dj-database-url>=2.1.0,<3.0.0
