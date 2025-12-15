@@ -240,6 +240,9 @@ Authorization: Bearer <access_token>
 
 ## 🗃️ Modelos de Dados
 
+### Modelo ER
+[Visualizar Diagrama ER](./estruturaDB.md)
+
 ### Cliente
 
 - `nome`: Nome completo
