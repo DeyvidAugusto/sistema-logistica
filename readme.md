@@ -2,7 +2,14 @@
 # Sistema de Logística - API REST
 
 Uma API REST completa para gestão de logística e entregas, desenvolvida com Django REST Framework. O sistema permite gerenciar clientes, motoristas, veículos, entregas e rotas de forma eficiente.
-
+```
+Branches
+├──Main
+│  └── Api simples sem sistema de autenticação, com todas as consultas liberas sem precisar pegar a token
+│
+└──API-autenticação
+   └── API com autenticação JWT, é necessario criar perfis e pegar a token para realizar chamadas
+```
 ## 📋 Visão Geral
 
 Este projeto implementa um sistema completo de logística que inclui:
@@ -408,7 +415,7 @@ Os logs do Django são configurados no `settings.py`. Para desenvolvimento, est�
 ### Banco de Dados
 
 - **Desenvolvimento**: SQLite (`db.sqlite3`)
-- **Produção**: PostgreSQL (configurado em settings.py)
+- **Deploy**: PostgreSQL (configurado em settings.py)
 
 ## 🚀 Deploy
 

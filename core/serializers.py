@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from django.utils import timezone
 from .models import (
     Cliente, Motorista, Veiculo, Entrega, Rota,
     HistoricoEntrega, StatusEntrega, StatusMotorista,
@@ -98,13 +99,25 @@ class EntregaSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Entrega
-        fields = '__all__'
+        fields = [
+            'id', 'codigo_rastreio', 'cliente_id', 'endereco_origem', 'endereco_destino',
+            'cep_origem', 'cep_destino', 'status', 'capacidade_necessaria', 'valor_frete',
+            'data_solicitacao', 'data_entrega_prevista', 'data_entrega_real', 'observacoes',
+            'motorista_id', 'rota', 'status_display', 'cliente_info', 'motorista_info', 'rota_info'
+        ]
         read_only_fields = ['codigo_rastreio', 'data_solicitacao', 'data_entrega_real']
     
     def validate(self, data):
         """
         Validações específicas para entregas.
         """
+        # Validação de data de entrega prevista
+        if 'data_entrega_prevista' in data:
+            if data['data_entrega_prevista'] < timezone.now().date():
+                raise serializers.ValidationError(
+                    'Data de entrega prevista não pode ser no passado.'
+                )
+        
         # Validação de capacidade para rota
         if 'rota' in data and data['rota']:
             rota = data['rota']
@@ -398,3 +411,9 @@ class RelatorioConsolidadoSerializer(serializers.Serializer):
                     "data_inicio não pode ser maior que data_fim"
                 )
         return data
+
+class RelatoriosResponseSerializer(serializers.Serializer):
+    """Serializer para resposta da view de relatórios"""
+    periodo = serializers.DictField()
+    estatisticas = serializers.DictField()
+    alertas = serializers.DictField()

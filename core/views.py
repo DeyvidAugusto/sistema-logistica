@@ -1,12 +1,13 @@
 from rest_framework import viewsets, generics, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q, Sum, Count, Case, When, Value, IntegerField
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from datetime import timedelta
+from decimal import Decimal
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -17,7 +18,8 @@ from core.serializers import (
     ClienteSerializer, MotoristaSerializer, VeiculoSerializer,
     EntregaSerializer, RotaSerializer, HistoricoEntregaSerializer,
     DashboardMotoristaSerializer, RastreamentoSerializer,
-    EntregaStatusUpdateSerializer, PerfilMotoristaSerializer
+    EntregaStatusUpdateSerializer, PerfilMotoristaSerializer,
+    RotaCreateSerializer, RotaUpdateSerializer, RelatoriosResponseSerializer
 )
 from core.permissions import (
     IsAdministrador, IsMotoristaOrAdministrador,
@@ -32,6 +34,17 @@ class ClienteViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['nome', 'cpf_cnpj', 'email']
     search_fields = ['nome', 'cpf_cnpj', 'email']
+    
+    def get_permissions(self):
+        """
+        Administradores: CRUD completo
+        Motoristas: Apenas leitura de clientes associados às suas entregas
+        """
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            permission_classes = [IsAuthenticated, IsAdministrador]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
     
     def get_queryset(self):
         """
@@ -78,11 +91,11 @@ class MotoristaViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         """
-        Admin vê todos, motorista vê apenas ele mesmo
+        Admin vê todos, motorista vê apenas ele mesmo (exceto para actions específicas)
         """
         queryset = super().get_queryset()
         
-        if not self.request.user.is_staff:
+        if not self.request.user.is_staff and self.action not in ['entregas']:
             try:
                 motorista = Motorista.objects.get(usuario=self.request.user)
                 queryset = queryset.filter(id=motorista.id)
@@ -389,6 +402,8 @@ class EntregaViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAuthenticated, IsAdministradorOuMotoristaDaEntrega]
         elif self.action in ['retrieve', 'list']:
             permission_classes = [IsAuthenticated, FiltroMotorista]
+        elif self.action == 'por_codigo_rastreio':
+            permission_classes = [AllowAny]  # Acesso público
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
@@ -551,8 +566,14 @@ class EntregaViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
         
+        # Incluir histórico na resposta
         serializer = self.get_serializer(entrega)
-        return Response(serializer.data)
+        response_data = serializer.data
+        historico = HistoricoEntrega.objects.filter(entrega=entrega)
+        historico_serializer = HistoricoEntregaSerializer(historico, many=True)
+        response_data['historico'] = historico_serializer.data
+        
+        return Response(response_data)
 
 class RotaViewSet(viewsets.ModelViewSet):
     queryset = Rota.objects.all()
@@ -560,6 +581,13 @@ class RotaViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['status', 'motorista', 'veiculo']
     search_fields = ['nome', 'descricao']
+    
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return RotaCreateSerializer
+        elif self.action in ['update', 'partial_update']:
+            return RotaUpdateSerializer
+        return RotaSerializer
     
     def get_permissions(self):
         """
@@ -885,7 +913,7 @@ class RotaViewSet(viewsets.ModelViewSet):
         
         # Atualizar veículo
         if rota.veiculo:
-            rota.veiculo.km_atual += rota.km_total_real
+            rota.veiculo.km_atual += Decimal(str(rota.km_total_real))
             rota.veiculo.save()
         
         return Response({
@@ -897,7 +925,7 @@ class RelatoriosView(generics.GenericAPIView):
     """View para relatórios gerais do sistema (apenas admin)"""
     
     permission_classes = [IsAuthenticated, IsAdministrador]
-    serializer_class = None
+    serializer_class = RelatoriosResponseSerializer
     
     def get(self, request):
         periodo = request.query_params.get('periodo', 'hoje')  # hoje, semana, mes
@@ -1033,21 +1061,21 @@ class DashboardMotoristaView(generics.GenericAPIView):
         entregas_concluidas = motorista.entregas.filter(status='entregue').count()
         capacidade_utilizada = rotas_ativas.aggregate(
             total=Coalesce(Sum('capacidade_total_utilizada'), 0)
-        )['total']
+        )['total'] or 0
         
+        # Cria um dicionário com os dados serializados
         data = {
             'motorista': MotoristaSerializer(motorista).data,
             'veiculo_atual': VeiculoSerializer(veiculo_atual).data if veiculo_atual else None,
             'rotas_ativas': RotaSerializer(rotas_ativas, many=True).data,
-            'entregas_hoje': EntregaSerializer(entregas_hoje, many=True).data,
+            'entregas_hoje': EntregaSerializer(entregas_hoje, many=True).data if entregas_hoje.exists() else [],
             'total_entregas': total_entregas,
             'entregas_pendentes': entregas_pendentes,
             'entregas_concluidas': entregas_concluidas,
             'capacidade_utilizada': capacidade_utilizada,
         }
         
-        serializer = DashboardMotoristaSerializer(data)
-        return Response(serializer.data)
+        return Response(data)
 
 class RastreamentoPublicoView(generics.GenericAPIView):
     """Rastreamento público (não requer autenticação)"""
