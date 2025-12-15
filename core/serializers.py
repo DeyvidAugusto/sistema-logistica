@@ -293,7 +293,7 @@ class TokenSerializer(serializers.Serializer):
 
 class DashboardMotoristaSerializer(serializers.Serializer):
     motorista = MotoristaSerializer(read_only=True)
-    veiculo_atual = VeiculoSerializer(read_only=True)
+    veiculo_atual = VeiculoSerializer(read_only=True, allow_null=True)
     rotas_ativas = RotaSerializer(many=True, read_only=True)
     total_entregas = serializers.IntegerField()
     entregas_pendentes = serializers.IntegerField()

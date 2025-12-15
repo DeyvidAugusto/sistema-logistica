@@ -26,6 +26,8 @@ from core.permissions import (
     IsProprioMotorista, IsAdministradorOuMotoristaDaEntrega,
     IsAdministradorOuMotoristaDaRota, FiltroMotorista
 )
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all()
@@ -50,6 +52,10 @@ class ClienteViewSet(viewsets.ModelViewSet):
         """
         Admin vê todos, motorista vê apenas clientes associados às suas entregas
         """
+        # Evitar erro durante geração de schema do Swagger
+        if getattr(self, 'swagger_fake_view', False):
+            return Cliente.objects.none()
+            
         queryset = super().get_queryset()
         
         # Se não for admin, filtra clientes das suas entregas
@@ -93,6 +99,10 @@ class MotoristaViewSet(viewsets.ModelViewSet):
         """
         Admin vê todos, motorista vê apenas ele mesmo (exceto para actions específicas)
         """
+        # Evitar erro durante geração de schema do Swagger
+        if getattr(self, 'swagger_fake_view', False):
+            return Motorista.objects.none()
+            
         queryset = super().get_queryset()
         
         if not self.request.user.is_staff and self.action not in ['entregas']:
@@ -250,9 +260,9 @@ class MotoristaViewSet(viewsets.ModelViewSet):
         )['total']
         
         data = {
-            'motorista': MotoristaSerializer(motorista).data,
-            'veiculo_atual': VeiculoSerializer(veiculo_atual).data if veiculo_atual else None,
-            'rotas_ativas': RotaSerializer(rotas_ativas, many=True).data,
+            'motorista': motorista,
+            'veiculo_atual': veiculo_atual,
+            'rotas_ativas': rotas_ativas,
             'total_entregas': total_entregas,
             'entregas_pendentes': entregas_pendentes,
             'entregas_concluidas': entregas_concluidas,
@@ -412,6 +422,10 @@ class EntregaViewSet(viewsets.ModelViewSet):
         """
         Admin vê todas entregas, motorista vê apenas suas entregas
         """
+        # Evitar erro durante geração de schema do Swagger
+        if getattr(self, 'swagger_fake_view', False):
+            return Entrega.objects.none()
+            
         queryset = super().get_queryset()
         
         if not self.request.user.is_staff:
@@ -545,7 +559,12 @@ class EntregaViewSet(viewsets.ModelViewSet):
         serializer = RastreamentoSerializer(data)
         return Response(serializer.data)
     
-    @action(detail=False, methods=['get'])
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('codigo', openapi.IN_QUERY, description="Código de rastreio", type=openapi.TYPE_STRING, required=True)
+        ]
+    )
+    @action(detail=False, methods=['get'], permission_classes=[AllowAny])
     def por_codigo_rastreio(self, request):
         """
         Rastreamento público (sem autenticação para código de rastreio)
@@ -610,6 +629,10 @@ class RotaViewSet(viewsets.ModelViewSet):
         """
         Admin vê todas rotas, motorista vê apenas suas rotas
         """
+        # Evitar erro durante geração de schema do Swagger
+        if getattr(self, 'swagger_fake_view', False):
+            return Rota.objects.none()
+            
         queryset = super().get_queryset()
         
         if not self.request.user.is_staff:
