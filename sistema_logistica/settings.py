@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-key-change-in-producti
 
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,sistema-logistica.onrender.com').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -119,7 +119,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'drf_yasg.openapi.AutoSchema',
 }
 
 SIMPLE_JWT = {
