@@ -20,7 +20,7 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'your-render-app-name.onrender.com',  # Substitua pelo seu domínio do Render
+    'sistema-logistica.onrender.com',
 ]
 
 # Application definition
