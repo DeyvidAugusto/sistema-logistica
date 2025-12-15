@@ -4,80 +4,9 @@
 
 Uma API REST completa para gestão de logística e entregas, desenvolvida com Django REST Framework. O sistema permite gerenciar clientes, motoristas, veículos, entregas e rotas de forma eficiente.
 
-```
-Branches
-├──Main
-│  └── Api simples sem sistema de autenticação, com todas as consultas liberas sem precisar pegar a token
-│
-└──API-autenticação
-   └── API com autenticação JWT, é necessario criar perfis e pegar a token para realizar chamadas
-```
+## 🔐 Autenticação
 
-## � Deploy no Render
-
-### Pré-requisitos
-
-- Conta no [Render](https://render.com)
-- Repositório no GitHub/GitLab/Bitbucket
-
-### Passos para Deploy
-
-#### 1. Preparar o Projeto
-
-```bash
-# Criar arquivo .env.example (já criado)
-cp .env.example .env
-
-# Commit das mudanças
-git add .
-git commit -m "Prepare for production deployment"
-git push origin main
-```
-
-#### 2. Configurar no Render
-
-1. Acesse [dashboard.render.com](https://dashboard.render.com)
-2. Clique em **"New"** → **"Blueprint"**
-3. Conecte seu repositório Git
-4. O Render detectará automaticamente o `render.yaml`
-
-#### 3. Configurar Variáveis de Ambiente
-
-No painel do Render, configure:
-
-- `DJANGO_SETTINGS_MODULE`: `sistema_logistica.settings_production`
-- `SECRET_KEY`: Gerado automaticamente
-- `DEBUG`: `false`
-- `ALLOWED_HOSTS`: Seu domínio do Render
-
-#### 4. Configurar Banco de Dados
-
-O Render criará automaticamente um banco PostgreSQL. As variáveis serão configuradas automaticamente via `DATABASE_URL`.
-
-#### 5. Deploy
-
-1. Clique em **"Create Blueprint"**
-2. Aguarde a construção e deploy
-3. Acesse sua API em `https://your-app-name.onrender.com`
-
-#### 6. Pós-deploy
-
-```bash
-# Executar migrações (se necessário)
-# O Render executa automaticamente no buildCommand
-```
-
-### URLs Importantes
-
-- **API**: `https://your-app-name.onrender.com/api/`
-- **Swagger**: `https://your-app-name.onrender.com/swagger/`
-- **Admin**: `https://your-app-name.onrender.com/admin/`
-
-### Troubleshooting
-
-- Verifique os logs no painel do Render
-- Certifique-se que todas as variáveis de ambiente estão configuradas
-- Teste localmente com `settings_production.py` antes do deploy
+O sistema utiliza JWT (JSON Web Tokens) para autenticação. É necessário criar perfis e obter um token para realizar chamadas autenticadas.
 
 ## 🏗️ Estrutura do Projeto
 
@@ -149,12 +78,9 @@ Crie um arquivo `.env` na raiz do projeto:
 SECRET_KEY=django-insecure-sua-chave-secreta-aqui
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
-DB_NAME=logistica_db
-DB_USER=seu_usuario
-DB_PASSWORD=sua_senha
-DB_HOST=localhost
-DB_PORT=5432
 ```
+
+**Nota**: O projeto usa SQLite por padrão para desenvolvimento local. Para usar PostgreSQL, configure as variáveis adicionais no `.env`.
 
 ### 4. Migrações do Banco de Dados
 
