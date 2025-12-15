@@ -1,4 +1,5 @@
 ![Python](https://img.shields.io/badge/Python-3.13%2B-blue) ![Poetry](https://img.shields.io/badge/Poetry-2.2%2B-purple) ![Django](https://img.shields.io/badge/Django-6.x-green)
+# TROQUE PARA A BRANCH DEPLOY, AINDA NÃO DEI MERGE NA MAIN
 
 # Sistema de Logística - API REST
 
