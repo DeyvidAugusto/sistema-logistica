@@ -1106,6 +1106,11 @@ class RastreamentoPublicoView(generics.GenericAPIView):
     permission_classes = []  # Público
     serializer_class = RastreamentoSerializer
     
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('codigo', openapi.IN_QUERY, description="Código de rastreio", type=openapi.TYPE_STRING, required=True)
+        ]
+    )
     def get(self, request):
         codigo = request.query_params.get('codigo', '').upper()
         
