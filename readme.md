@@ -361,6 +361,12 @@ python manage.py seed_data --count 50
 python manage.py createsuperuser
 ```
 
+### Rodar Testes
+```bash
+ python manage.py test core.tests --verbosity=2
+```
+--verbosity=2 deixa os logs mais detalhados
+
 ## 🐳 Docker (Opcional)
 
 Se desejar usar Docker:
