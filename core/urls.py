@@ -12,4 +12,9 @@ router.register(r'rotas', views.RotaViewSet, basename='rota')
 urlpatterns = [
     path('', include(router.urls)),
     path('relatorios/', views.RelatoriosView.as_view(), name='relatorios'),
+    path('dashboard/motorista/', views.DashboardMotoristaView.as_view(), name='dashboard-motorista'),
+    path('rastreio/', views.RastreamentoPublicoView.as_view(), name='rastreio-publico'),
+    
+    # Endpoint para motorista ver seus dados
+    path('motoristas/me/', views.MotoristaViewSet.as_view({'get': 'me'}), name='motorista-me'),
 ]

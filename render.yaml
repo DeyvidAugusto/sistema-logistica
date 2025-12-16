@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: sistema-logistica-api
+    runtime: python3
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn sistema_logistica.wsgi:application --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: sistema_logistica.settings_production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
+      - key: DATABASE_URL
+        fromDatabase:
+          type: postgresql
+          name: sistema-logistica-db
+          property: connectionString
+      - key: ALLOWED_HOSTS
+        fromService:
+          type: web
+          name: sistema-logistica-api
+          property: host
+
+databases:
+  - name: sistema-logistica-db
+    databaseName: sistema_logistica
+    user: sistema_logistica_user
