@@ -950,6 +950,14 @@ class RelatoriosView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated, IsAdministrador]
     serializer_class = RelatoriosResponseSerializer
     
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter(
+            'periodo', openapi.IN_QUERY,
+            description="Período para o relatório. Valores: 'hoje' (padrão), 'semana', 'mes'",
+            type=openapi.TYPE_STRING,
+            required=False
+        )
+    ], responses={200: RelatoriosResponseSerializer})
     def get(self, request):
         periodo = request.query_params.get('periodo', 'hoje')  # hoje, semana, mes
         
