@@ -1,12 +1,54 @@
 ![Python](https://img.shields.io/badge/Python-3.13%2B-blue) ![Poetry](https://img.shields.io/badge/Poetry-2.2%2B-purple) ![Django](https://img.shields.io/badge/Django-6.x-green)
 
-# Sistema de Logística - API REST
+## Instituições de Fomento e Parceria
+[![Website IFB](https://img.shields.io/badge/Website-IFB-%23508C3C.svg?labelColor=%23C8102E)](https://www.ifb.edu.br/) 
+[![Website ihwbr](https://img.shields.io/badge/Website-ihwbr-%23DAA520.svg?labelColor=%232E2E2E)](https://hardware.org.br/)
+
+## Orientador (link para o perfil do orientador)
+
+[![LinkedIn Claudio Ulisse](https://img.shields.io/badge/LinkedIn-Claudio_Ulisse-%230077B5.svg?labelColor=%23FFFFFF&logo=linkedin)](https://www.linkedin.com/in/claudioulisse/)
+[![GitHub claulis](https://img.shields.io/badge/GitHub-claulis_(Claudio_Ulisse)-%23181717.svg?logo=github&logoColor=white)](https://github.com/claulis)
+[![Lattes Claudio Ulisse](https://img.shields.io/badge/Lattes-Claudio_Ulisse-green.svg?logo=cnpq&logoColor=white)](http://lattes.cnpq.br/4607303092740768)
+
+# Sistema de Logística - API REST - Visão Geral
 
 Uma API REST completa para gestão de logística e entregas, desenvolvida com Django REST Framework. O sistema permite gerenciar clientes, motoristas, veículos, entregas e rotas de forma eficiente.
 
-## 🔐 Autenticação
 
-O sistema utiliza JWT (JSON Web Tokens) para autenticação. É necessário criar perfis e obter um token para realizar chamadas autenticadas.
+# Sumario 
+- [🔐 Autenticação](#-autenticação)
+- [🏗️ Estrutura do Projeto](#️-estrutura-do-projeto)
+- [🚀 Instalação e Configuração](#-instalação-e-configuração)
+- [🏃‍♂️ Executando o Servidor](#️-executando-o-servidor)
+- [📚 Documentação da API](#-documentação-da-api)
+- [📋 Endpoints da API](#-endpoints-da-api)
+- [🗃️ Modelos de Dados](#️-modelos-de-dados)
+- [🔐 Permissões](#-permissões)
+- [🧪 Comandos de Gerenciamento](#-comandos-de-gerenciamento)
+- [🐳 Docker (Opcional)](#-docker-opcional)
+- [📊 Monitoramento](#-monitoramento)
+- [🚀 Deploy](#-deploy)
+- [🤝 Contribuição](#-contribuição)
+- [📝 Licença](#-licença)
+
+
+## Pacotes Utilizados
+
+| Pacote                      | Versão       | Descrição                                          |
+|-----------------------------|--------------|-----------------------------------------------------|
+| Django                      | >=6.0,<7.0   | Framework web principal                            |
+| djangorestframework         | >=3.16.1     | Toolkit para construção de APIs REST                |
+| djangorestframework-simplejwt| >=5.5.1      | Autenticação JWT para DRF                          |
+| django-cors-headers         | >=4.9.0      | Suporte a CORS (Cross-Origin Resource Sharing)     |
+| python-dotenv               | >=1.2.1      | Gerenciamento de variáveis de ambiente             |
+| drf-yasg                    | >=1.21.11    | Geração automática de documentação Swagger/Redoc   |
+| psycopg2-binary             | >=2.9.11     | Adaptador PostgreSQL                               |
+| django-filter               | >=25.2       | Filtragem em APIs REST                             |
+| gunicorn                    | >=21.2.0     | Servidor WSGI para produção                        |
+| whitenoise                  | >=6.6.0      | Servir arquivos estáticos em produção              |
+| dj-database-url             | >=2.1.0      | Parsing de URLs de banco de dados                  |
+
+
 
 ## 🏗️ Estrutura do Projeto
 
@@ -41,203 +83,6 @@ sistema-logistica/
             └── seed_data.py            # Comando para popular dados de teste
 
 ```
-
-## 🚀 Instalação e Configuração
-
-### Pré-requisitos
-
-- Python 3.13+
-- Poetry (recomendado) ou pip
-
-### 1. Clonagem do Repositório
-
-```bash
-git clone <url-do-repositorio>
-cd sistema-logistica
-```
-
-### 2. Instalação das Dependências
-
-#### Usando Poetry (Recomendado)
-
-```bash
-poetry install
-```
-
-#### Usando pip
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Configuração do Ambiente
-
-Crie um arquivo `.env` na raiz do projeto:
-
-```env
-SECRET_KEY=django-insecure-sua-chave-secreta-aqui
-DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1
-```
-
-**Nota**: O projeto usa SQLite por padrão para desenvolvimento local. Para usar PostgreSQL, configure as variáveis adicionais no `.env`.
-
-### 4. Migrações do Banco de Dados
-
-```bash
-python manage.py makemigrations
-python manage.py migrate
-```
-
-### 5. Criar Superusuário
-
-```bash
-python manage.py createsuperuser
-```
-
-### 6. Popular Dados de Teste (Opcional)
-
-```bash
-python manage.py seed_data --count 20
-```
-
-## 🏃‍♂️ Executando o Servidor
-
-```bash
-python manage.py runserver
-```
-
-A API estará disponível em: http://localhost:8000
-
-## 📚 Documentação da API
-
-### URLs Importantes
-
-- **API Base**: `http://localhost:8000/api/`
-- **Documentação Swagger**: `http://localhost:8000/swagger/`
-- **Documentação Redoc**: `http://localhost:8000/redoc/`
-- **Admin Django**: `http://localhost:8000/admin/`
-
-### Autenticação (Recomendo fazer pelo swagger)
-
-O sistema utiliza JWT (JSON Web Tokens) para autenticação.
-
-#### Login
-
-```http
-POST /api/token/
-Content-Type: application/json
-
-{
-    "username": "seu_usuario",
-    "password": "sua_senha"
-}
-```
-
-**Resposta:**
-
-```json
-{
-  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-  "user": {
-    "id": 1,
-    "username": "admin",
-    "email": "admin@example.com",
-    "is_staff": true,
-    "motorista": null
-  }
-}
-```
-
-#### Refresh Token
-
-```http
-POST /api/token/refresh/
-Content-Type: application/json
-
-{
-    "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
-}
-```
-
-### Headers de Autenticação
-
-Para todas as requisições autenticadas, inclua o header:
-
-```
-Authorization: Bearer <access_token>
-```
-
-## 📋 Endpoints da API
-
-### Clientes
-
-- `GET /api/clientes/` - Listar clientes
-- `POST /api/clientes/` - Criar cliente
-- `GET /api/clientes/{id}/` - Detalhes do cliente
-- `PUT /api/clientes/{id}/` - Atualizar cliente
-- `DELETE /api/clientes/{id}/` - Remover cliente
-
-### Motoristas
-
-- `GET /api/motoristas/` - Listar motoristas
-- `POST /api/motoristas/` - Criar motorista
-- `GET /api/motoristas/{id}/` - Detalhes do motorista
-- `PUT /api/motoristas/{id}/` - Atualizar motorista
-- `DELETE /api/motoristas/{id}/` - Remover motorista
-- `GET /api/motoristas/me/` - Dados do motorista logado
-- `GET /api/motoristas/{id}/entregas/` - Entregas do motorista
-- `GET /api/motoristas/{id}/rotas/` - Rotas do motorista
-- `GET /api/motoristas/{id}/historico/` - Histórico do motorista
-- `PUT /api/motoristas/{id}/atribuir_veiculo/` - Atribuir veículo
-- `GET /api/motoristas/{id}/visao_completa/` - Visão completa do motorista
-
-### Veículos
-
-- `GET /api/veiculos/` - Listar veículos
-- `POST /api/veiculos/` - Criar veículo
-- `GET /api/veiculos/{id}/` - Detalhes do veículo
-- `PUT /api/veiculos/{id}/` - Atualizar veículo
-- `DELETE /api/veiculos/{id}/` - Remover veículo
-- `GET /api/veiculos/disponiveis/` - Veículos disponíveis
-- `GET /api/veiculos/{id}/rotas/` - Rotas do veículo
-- `GET /api/veiculos/{id}/historico/` - Histórico do veículo
-- `GET /api/veiculos/{id}/status_detalhado/` - Status detalhado
-
-### Entregas
-
-- `GET /api/entregas/` - Listar entregas
-- `POST /api/entregas/` - Criar entrega
-- `GET /api/entregas/{id}/` - Detalhes da entrega
-- `PUT /api/entregas/{id}/` - Atualizar entrega
-- `DELETE /api/entregas/{id}/` - Remover entrega
-- `POST /api/entregas/{id}/atribuir_motorista/` - Atribuir motorista
-- `PUT /api/entregas/{id}/atualizar_status/` - Atualizar status
-- `GET /api/entregas/{id}/rastreamento/` - Rastreamento da entrega
-- `GET /api/entregas/por_codigo_rastreio/?codigo=ABC123` - Rastreamento público
-
-### Rotas
-
-- `GET /api/rotas/` - Listar rotas
-- `POST /api/rotas/` - Criar rota
-- `GET /api/rotas/{id}/` - Detalhes da rota
-- `PUT /api/rotas/{id}/` - Atualizar rota
-- `DELETE /api/rotas/{id}/` - Remover rota
-- `GET /api/rotas/{id}/entregas/` - Entregas da rota
-- `POST /api/rotas/{id}/adicionar_entrega/` - Adicionar entrega à rota
-- `DELETE /api/rotas/{id}/remover_entrega/` - Remover entrega da rota
-- `GET /api/rotas/{id}/capacidade/` - Capacidade da rota
-- `GET /api/rotas/{id}/dashboard/` - Dashboard da rota
-- `PUT /api/rotas/{id}/iniciar_rota/` - Iniciar rota
-- `PUT /api/rotas/{id}/concluir_rota/` - Concluir rota
-
-### Outros Endpoints
-
-- `GET /api/relatorios/` - Relatórios gerais (admin)
-- `GET /api/dashboard/motorista/` - Dashboard do motorista
-- `GET /api/rastreio/?codigo=ABC123` - Rastreamento público
-
 ## 🗃️ Modelos de Dados
 
 ### Modelo ER
@@ -324,6 +169,72 @@ Authorization: Bearer <access_token>
 - `motorista`: Motorista que atualizou
 - `data_atualizacao`: Data da atualização (automático)
 
+
+## 📚 Documentação da API
+
+### URLs Importantes
+
+- **API Base**: `http://localhost:8000/api/`
+- **Documentação Swagger**: `http://localhost:8000/swagger/`
+- **Documentação Redoc**: `http://localhost:8000/redoc/`
+- **Admin Django**: `http://localhost:8000/admin/`
+
+## 🔐 Autenticação
+
+O sistema utiliza JWT (JSON Web Tokens) para autenticação. É necessário criar perfis e obter um token para realizar chamadas autenticadas.
+
+perfil de teste: admin
+
+senha de teste: 123
+
+#### Login
+
+```http
+POST /api/token/
+Content-Type: application/json
+
+{
+    "username": "seu_usuario",
+    "password": "sua_senha"
+}
+```
+
+**Resposta:**
+
+```json
+{
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "user": {
+    "id": 1,
+    "username": "admin",
+    "email": "admin@example.com",
+    "is_staff": true,
+    "motorista": null
+  }
+}
+```
+
+#### Refresh Token
+
+```http
+POST /api/token/refresh/
+Content-Type: application/json
+
+{
+    "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+}
+```
+
+### Headers de Autenticação
+
+Para todas as requisições autenticadas, inclua o header:
+
+```
+Authorization: Bearer <access_token>
+```
+
+
 ## 🔐 Permissões
 
 ### Administrador
@@ -343,6 +254,144 @@ Authorization: Bearer <access_token>
 ### Público
 
 - Rastreamento de entregas por código
+
+## 📋 Endpoints da API
+
+### Clientes
+
+- `GET /api/clientes/` - Listar clientes
+- `POST /api/clientes/` - Criar cliente
+- `GET /api/clientes/{id}/` - Detalhes do cliente
+- `PUT /api/clientes/{id}/` - Atualizar cliente
+- `DELETE /api/clientes/{id}/` - Remover cliente
+
+### Motoristas
+
+- `GET /api/motoristas/` - Listar motoristas
+- `POST /api/motoristas/` - Criar motorista
+- `GET /api/motoristas/{id}/` - Detalhes do motorista
+- `PUT /api/motoristas/{id}/` - Atualizar motorista
+- `DELETE /api/motoristas/{id}/` - Remover motorista
+- `GET /api/motoristas/me/` - Dados do motorista logado
+- `GET /api/motoristas/{id}/entregas/` - Entregas do motorista
+- `GET /api/motoristas/{id}/rotas/` - Rotas do motorista
+- `GET /api/motoristas/{id}/historico/` - Histórico do motorista
+- `PUT /api/motoristas/{id}/atribuir_veiculo/` - Atribuir veículo
+- `GET /api/motoristas/{id}/visao_completa/` - Visão completa do motorista
+
+### Veículos
+
+- `GET /api/veiculos/` - Listar veículos
+- `POST /api/veiculos/` - Criar veículo
+- `GET /api/veiculos/{id}/` - Detalhes do veículo
+- `PUT /api/veiculos/{id}/` - Atualizar veículo
+- `DELETE /api/veiculos/{id}/` - Remover veículo
+- `GET /api/veiculos/disponiveis/` - Veículos disponíveis
+- `GET /api/veiculos/{id}/rotas/` - Rotas do veículo
+- `GET /api/veiculos/{id}/historico/` - Histórico do veículo
+- `GET /api/veiculos/{id}/status_detalhado/` - Status detalhado
+
+### Entregas
+
+- `GET /api/entregas/` - Listar entregas
+- `POST /api/entregas/` - Criar entrega
+- `GET /api/entregas/{id}/` - Detalhes da entrega
+- `PUT /api/entregas/{id}/` - Atualizar entrega
+- `DELETE /api/entregas/{id}/` - Remover entrega
+- `POST /api/entregas/{id}/atribuir_motorista/` - Atribuir motorista
+- `PUT /api/entregas/{id}/atualizar_status/` - Atualizar status
+- `GET /api/entregas/{id}/rastreamento/` - Rastreamento da entrega
+- `GET /api/entregas/por_codigo_rastreio/?codigo=ABC123` - Rastreamento público
+
+### Rotas
+
+- `GET /api/rotas/` - Listar rotas
+- `POST /api/rotas/` - Criar rota
+- `GET /api/rotas/{id}/` - Detalhes da rota
+- `PUT /api/rotas/{id}/` - Atualizar rota
+- `DELETE /api/rotas/{id}/` - Remover rota
+- `GET /api/rotas/{id}/entregas/` - Entregas da rota
+- `POST /api/rotas/{id}/adicionar_entrega/` - Adicionar entrega à rota
+- `DELETE /api/rotas/{id}/remover_entrega/` - Remover entrega da rota
+- `GET /api/rotas/{id}/capacidade/` - Capacidade da rota
+- `GET /api/rotas/{id}/dashboard/` - Dashboard da rota
+- `PUT /api/rotas/{id}/iniciar_rota/` - Iniciar rota
+- `PUT /api/rotas/{id}/concluir_rota/` - Concluir rota
+
+### Outros Endpoints
+
+- `GET /api/relatorios/` - Relatórios gerais (admin)
+- `GET /api/dashboard/motorista/` - Dashboard do motorista
+- `GET /api/rastreio/?codigo=ABC123` - Rastreamento público
+
+
+## 🚀 Instalação e Configuração
+
+### Pré-requisitos
+
+- Python 3.13+
+- Poetry (recomendado) ou pip
+
+### 1. Clonagem do Repositório
+
+```bash
+git clone <url-do-repositorio>
+cd sistema-logistica
+```
+
+### 2. Instalação das Dependências
+
+#### Usando Poetry (Recomendado)
+
+```bash
+poetry install
+```
+
+#### Usando pip
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Configuração do Ambiente
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+SECRET_KEY=django-insecure-sua-chave-secreta-aqui
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+```
+
+**Nota**: O projeto usa SQLite por padrão para desenvolvimento local. Para usar PostgreSQL, configure as variáveis adicionais no `.env`.
+
+### 4. Migrações do Banco de Dados
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 5. Criar Superusuário
+
+```bash
+python manage.py createsuperuser
+```
+
+### 6. Popular Dados de Teste (Opcional)
+
+```bash
+python manage.py seed_data --count 20
+```
+
+## 🏃‍♂️ Executando o Servidor
+
+```bash
+python manage.py runserver
+```
+
+A API estará disponível em: http://localhost:8000
+
 
 ## 🧪 Comandos de Gerenciamento
 
