@@ -496,12 +496,6 @@ CORS_ALLOWED_ORIGINS=https://seudominio.com
 
 Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
 
-## 📞 Suporte
-
-Para suporte, entre em contato:
-
-- **Email**: deyvidaugusto100@gmail.com
-- **Documentação**: http://localhost:8000/swagger/
 
 ---
 
